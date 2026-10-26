@@ -1,54 +1,197 @@
-// Game configuration and state variables
-const GOAL_CANS = 25;        // Total items needed to collect
-let currentCans = 0;         // Current number of items collected
-let gameActive = false;      // Tracks if game is currently running
-let spawnInterval;          // Holds the interval for spawning items
+const GOAL_CANS = 20;
+let currentCans = 0;
+let timeLeft = 30;
+let gameActive = false;
+let spawnInterval;
+let timerInterval;
 
-// Creates the 3x3 game grid where items will appear
+const winningMessages = [
+  "Amazing! You are a Water Quest champion!",
+  "Great job! You reached the clean water goal!",
+  "You won! Every drop matters!"
+];
+
+const losingMessages = [
+  "Good try! Play again and collect more cans!",
+  "Time is up! You can do better next time!",
+  "Keep trying! Every drop counts!"
+];
+
 function createGrid() {
-  const grid = document.querySelector('.game-grid');
-  grid.innerHTML = ''; // Clear any existing grid cells
+  const grid = document.querySelector(".game-grid");
+  grid.innerHTML = "";
+
   for (let i = 0; i < 9; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'grid-cell'; // Each cell represents a grid square
+    const cell = document.createElement("div");
+    cell.className = "grid-cell";
     grid.appendChild(cell);
   }
 }
 
-// Ensure the grid is created when the page loads
-createGrid();
+function updateScore() {
+  document.getElementById("current-cans").textContent = currentCans;
+}
 
-// Spawns a new item in a random grid cell
 function spawnWaterCan() {
-  if (!gameActive) return; // Stop if the game is not active
-  const cells = document.querySelectorAll('.grid-cell');
-  
-  // Clear all cells before spawning a new water can
-  cells.forEach(cell => (cell.innerHTML = ''));
+  if (!gameActive) return;
 
-  // Select a random cell from the grid to place the water can
+  const cells = document.querySelectorAll(".grid-cell");
+
+  cells.forEach(cell => {
+    cell.innerHTML = "";
+  });
+
   const randomCell = cells[Math.floor(Math.random() * cells.length)];
 
-  // Use a template literal to create the wrapper and water-can element
-  randomCell.innerHTML = `
-    <div class="water-can-wrapper">
-      <div class="water-can"></div>
-    </div>
-  `;
+  // 20% chance of dirty water
+  const isDirty = Math.random() < 0.2;
+
+  const can = document.createElement("div");
+  can.className = isDirty ? "water-can dirty" : "water-can";
+  can.setAttribute("role", "button");
+  can.setAttribute("tabindex", "0");
+  can.setAttribute("aria-label", isDirty ? "Dirty water" : "Clean water can");
+
+  function collectCan() {
+    if (!gameActive || !can.isConnected) return;
+
+    if (isDirty) {
+      currentCans = Math.max(0, currentCans - 2);
+      document.getElementById("achievements").textContent =
+        "Oops! Dirty water! -2 points";
+    } else {
+      currentCans++;
+      document.getElementById("achievements").textContent =
+        "Great! +1 water can!";
+    }
+
+    updateScore();
+    can.remove();
+
+    if (currentCans >= GOAL_CANS) {
+      endGame();
+    }
+  }
+
+  can.addEventListener("click", collectCan);
+  can.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      collectCan();
+    }
+  });
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "water-can-wrapper";
+  wrapper.appendChild(can);
+  randomCell.appendChild(wrapper);
 }
 
-// Initializes and starts a new game
 function startGame() {
-  if (gameActive) return; // Prevent starting a new game if one is already active
+  if (gameActive) return;
+
+  clearInterval(spawnInterval);
+  clearInterval(timerInterval);
+
+  currentCans = 0;
+  timeLeft = 30;
   gameActive = true;
-  createGrid(); // Set up the game grid
-  spawnInterval = setInterval(spawnWaterCan, 1000); // Spawn water cans every second
-}
 
+  updateScore();
+  document.getElementById("timer").textContent = timeLeft;
+  document.getElementById("achievements").textContent = "";
+
+  createGrid();
+  spawnWaterCan();
+
+  spawnInterval = setInterval(spawnWaterCan, 700);
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      endGame();
+    }
+  }, 1000);
+}
 function endGame() {
-  gameActive = false; // Mark the game as inactive
-  clearInterval(spawnInterval); // Stop spawning water cans
+  if (!gameActive) return;
+
+  gameActive = false;
+
+  clearInterval(spawnInterval);
+  clearInterval(timerInterval);
+
+  document.querySelectorAll(".grid-cell").forEach(cell => {
+    cell.innerHTML = "";
+  });
+
+  const messages = currentCans >= GOAL_CANS
+    ? winningMessages
+    : losingMessages;
+
+  const randomMessage = messages[
+    Math.floor(Math.random() * messages.length)
+  ];
+
+  document.getElementById("achievements").textContent = randomMessage;
+
+  if (currentCans >= GOAL_CANS) {
+    celebrateWin();
+  }
 }
 
-// Set up click handler for the start button
-document.getElementById('start-game').addEventListener('click', startGame);
+function celebrateWin() {
+  const celebration = document.createElement("div");
+  celebration.className = "celebration";
+  celebration.textContent = "🏆 AMAZING! YOU WON! 🎉";
+
+  document.querySelector(".container").appendChild(celebration);
+
+  const colors = ["#FFC907", "#2E9DF7", "#4FCB53", "#FF902A"];
+
+  for (let i = 0; i < 60; i++) {
+    const confetti = document.createElement("div");
+    confetti.className = "confetti";
+
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.backgroundColor =
+      colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.animationDelay = Math.random() * 1.5 + "s";
+
+    document.body.appendChild(confetti);
+
+    setTimeout(() => {
+      confetti.remove();
+    }, 4000);
+  }
+
+  setTimeout(() => {
+    celebration.remove();
+  }, 4000);
+}
+
+function resetGame() {
+  clearInterval(spawnInterval);
+  clearInterval(timerInterval);
+
+  gameActive = false;
+  currentCans = 0;
+  timeLeft = 30;
+
+  updateScore();
+  document.getElementById("timer").textContent = timeLeft;
+  document.getElementById("achievements").textContent = "";
+
+  document.querySelectorAll(".celebration").forEach(item => {
+    item.remove();
+  });
+
+  createGrid();
+}
+
+document.getElementById("start-game").addEventListener("click", startGame);
+document.getElementById("reset-game").addEventListener("click", resetGame);
+
+createGrid();
