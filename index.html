@@ -4,34 +4,72 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Water Quest</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <link href="style.css" rel="stylesheet">
 </head>
 <body>
   <div class="container">
-    <img src="img/cw_logo_horizontal.png"
-     alt="charity: water logo"
-     class="charity-logo">
 
-     <h1>💧 Water Quest</h1>
+    <img src="img/cw_logo_horizontal.png"
+         alt="charity: water logo"
+         class="charity-logo">
+
+    <h1>💧 Water Quest</h1>
+
     <p class="game-instructions">
-      Collect 20 yellow water cans in 30 seconds!
+      Collect yellow water cans before time runs out!
       Avoid dirty water!
+    </p>
+
+    <div class="difficulty-section">
+      <label for="difficulty">Choose Difficulty:</label>
+      <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="normal" selected>Normal</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+
+    <p id="game-goal">
+      Collect 20 cans in 30 seconds!
     </p>
 
     <div class="stats">
       <p>Cans Collected: <span id="current-cans">0</span></p>
+      <p>Goal: <span id="goal">20</span></p>
       <p>Time Left: <span id="timer">30</span>s</p>
     </div>
 
-    <div id="achievements" class="achievement" aria-live="polite"></div>
+    <div id="achievements"
+         class="achievement"
+         aria-live="polite"></div>
+
     <div class="game-grid"></div>
 
     <button id="start-game">Start Game</button>
     <button id="reset-game">Reset Game</button>
 
-    <p class="mission">
-      Every drop matters! Learn more at charity: water.
-    </p>
+    <footer class="mission">
+      <p>
+        Every drop matters! Help bring clean water
+        to people around the world.
+      </p>
+
+      <a href="https://www.charitywater.org/"
+         target="_blank" rel="noopener noreferrer">
+        Visit charity: water
+      </a>
+
+      <a href="https://www.charitywater.org/donate"
+         target="_blank" rel="noopener noreferrer">
+        Donate Now
+      </a>
+    </footer>
+
   </div>
 
   <script src="script.js"></script>

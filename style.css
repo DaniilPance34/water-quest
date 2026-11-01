@@ -4,7 +4,7 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Montserrat", Arial, sans-serif;
   margin: 0;
   padding: 20px;
   background-color: #eaf6ff;
@@ -21,6 +21,14 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+.charity-logo {
+  display: block;
+  width: 250px;
+  max-width: 90%;
+  height: auto;
+  margin: 0 auto 20px;
+}
+
 h1 {
   color: #2E9DF7;
   font-size: 36px;
@@ -29,6 +37,26 @@ h1 {
 .game-instructions {
   font-size: 18px;
   line-height: 1.5;
+}
+
+.difficulty-section {
+  margin: 20px 0;
+  font-weight: bold;
+}
+
+.difficulty-section select {
+  font-family: inherit;
+  padding: 10px 15px;
+  margin-left: 10px;
+  border: 2px solid #2E9DF7;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#game-goal {
+  font-weight: bold;
+  color: #2E9DF7;
 }
 
 .stats {
@@ -81,6 +109,11 @@ h1 {
   animation: popUp 0.3s ease-out;
 }
 
+.water-can:focus-visible {
+  outline: 3px solid #2E9DF7;
+  outline-offset: 4px;
+}
+
 .water-can.dirty {
   filter: grayscale(1) brightness(0.5);
 }
@@ -95,6 +128,7 @@ h1 {
 }
 
 button {
+  font-family: inherit;
   background-color: #FFC907;
   color: #222;
   border: none;
@@ -106,9 +140,14 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background-color: #2E9DF7;
   color: white;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .achievement {
@@ -116,50 +155,15 @@ button:hover {
   font-weight: bold;
   color: #159A48;
   min-height: 30px;
+  margin: 15px 0;
 }
 
-.celebration {
-  font-size: 36px;
-  margin-top: 20px;
-  animation: popUp 0.5s ease-out;
-}
-
-.mission {
-  margin-top: 25px;
-  color: #555;
-  font-size: 14px;
-}
-
-@media (max-width: 500px) {
-  body {
-    padding: 10px;
-  }
-
-  .container {
-    padding: 15px;
-  }
-
-  h1 {
-    font-size: 28px;
-  }
-  .stats {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .game-grid {
-    gap: 7px;
-  }
-
-  button {
-    width: 90%;
-  }
-}
 .celebration {
   font-size: 30px;
   font-weight: bold;
   color: #159A48;
   text-align: center;
+  margin-top: 20px;
   animation: popUp 0.5s ease-out;
 }
 
@@ -186,10 +190,59 @@ button:hover {
   }
 }
 
-.charity-logo {
-  display: block;
-  width: 250px;
-  max-width: 90%;
-  height: auto;
-  margin: 0 auto 20px;
+.mission {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px solid #eaf6ff;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.mission a {
+  display: inline-block;
+  margin: 8px;
+  color: #1678ba;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.mission a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .stats {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .game-grid {
+    gap: 7px;
+  }
+
+  button {
+    width: 90%;
+  }
+
+  .difficulty-section select {
+    display: block;
+    margin: 10px auto;
+  }
+
+  .celebration {
+    font-size: 24px;
+  }
 }
